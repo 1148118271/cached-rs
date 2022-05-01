@@ -1,6 +1,6 @@
 use std::io;
 use std::io::{ErrorKind, Read, Write};
-use std::net::{Shutdown, TcpStream};
+use std::net::TcpStream;
 
 
 pub struct Cached {
