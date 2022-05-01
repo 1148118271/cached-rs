@@ -1,6 +1,6 @@
 use std::io;
 use std::io::{ErrorKind, Read, Write};
-use std::net::TcpStream;
+use std::net::{TcpStream, ToSocketAddrs};
 
 
 pub struct Cached {
@@ -9,8 +9,8 @@ pub struct Cached {
 
 
 impl Cached {
-    pub fn connect() -> io::Result<Cached> {
-        let mut stream = TcpStream::connect("127.0.0.1:9200")?;
+    pub fn connect<A: ToSocketAddrs>(addr: A) -> io::Result<Cached> {
+        let mut stream = TcpStream::connect(addr)?;
         let mut status = [0; 3];
         stream.read(&mut status)?;
         if status.eq(&[b'2', b'0', b'0']) {
@@ -79,7 +79,7 @@ impl Cached {
 
 
 #[test] fn t() {
-    let mut cached = Cached::connect().unwrap();
+    let mut cached = Cached::connect("127.0.0.1:9200").unwrap();
     let result = cached.set("key", "value").unwrap();
     println!("{:?}", String::from_utf8(result));
     let result = cached.get("key").unwrap();
